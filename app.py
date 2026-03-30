@@ -25,14 +25,17 @@ st.markdown("""
 st.title("✨ Creador de Carruseles Mágico")
 
 # Conectar con tu API Key secreta (Invisible para el usuario)
-# Conectar con tu API Key secreta
+# Connect to your secret API Key
 try:
     api_key = st.secrets["GOOGLE_API_KEY"]
-    # Forzamos el uso de la versión estable v1 de la API
+    # Force the stable version v1 and REST transport to avoid model not found errors
     genai.configure(api_key=api_key, transport='rest') 
+    
+    # IMPORTANT: We use the model name with the prefix 'models/'
     model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
 except Exception as e:
-    st.error(f"Error de configuración: {e}")
+    st.error(f"Configuration error: {e}")
+
 
 
 # Interfaz del usuario
