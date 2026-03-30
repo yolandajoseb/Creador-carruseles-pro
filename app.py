@@ -45,7 +45,7 @@ if st.button("Generar mi Carrusel Profesional"):
         with st.spinner('Creando contenido estratégico...'):
             try:
                 # Usamos el modelo más moderno y rápido de 2026
-                model = genai.GenerativeModel('gemini-pro')
+                model = genai.GenerativeModel('gemini-1.5-flash-latest')
                 prompt = f"Crea un carrusel de {num_slides} slides para {red_social} con ángulo {angulo}. Idea: {idea}. Incluye sugerencias de fotos de Unsplash por cada slide."
                 response = model.generate_content(prompt)
                 st.success("¡Listo! Aquí tienes tu contenido:")
