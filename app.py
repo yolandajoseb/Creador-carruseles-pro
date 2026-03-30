@@ -25,11 +25,15 @@ st.markdown("""
 st.title("✨ Creador de Carruseles Mágico")
 
 # Conectar con tu API Key secreta (Invisible para el usuario)
+# Conectar con tu API Key secreta
 try:
     api_key = st.secrets["GOOGLE_API_KEY"]
-    genai.configure(api_key=api_key)
-except:
-    st.error("Error de configuración: Asegúrate de añadir tu GOOGLE_API_KEY en los Secrets de Streamlit.")
+    # Forzamos el uso de la versión estable v1 de la API
+    genai.configure(api_key=api_key, transport='rest') 
+    model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
+except Exception as e:
+    st.error(f"Error de configuración: {e}")
+
 
 # Interfaz del usuario
 col1, col2 = st.columns(2)
