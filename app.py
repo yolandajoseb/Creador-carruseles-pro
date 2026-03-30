@@ -1,8 +1,8 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Configuración Visual
-st.set_page_config(page_title="Generador de Carruseles", layout="wide")
+# 1. Configuración de Marca y Estética
+st.set_page_config(page_title="Generador de Carruseles Elite", layout="wide")
 
 st.markdown("""
     <style>
@@ -16,48 +16,46 @@ st.markdown("""
         border-radius: 30px;
         width: 100%;
         font-weight: bold;
+        border: none;
     }
     </style>
     """, unsafe_allow_html=True)
 
-st.title("✨ Creador de Carruseles Mágico")
+# 2. Título
+st.title("✨Creador de Carruseles Mágico Yolanda Concreta")
 
-# Intentar conectar con la API
-# Conectar con tu API Key secreta (Solución definitiva v1)
-try:
-    if "GOOGLE_API_KEY" in st.secrets:
-        # Forzamos transporte REST para evitar errores de modelos no encontrados
+# 3. Conexión Segura con la IA
+model = None
+if "GOOGLE_API_KEY" in st.secrets:
+    try:
         genai.configure(api_key=st.secrets["GOOGLE_API_KEY"], transport='rest')
-        # Usamos la ruta completa del modelo estable
-        model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
-    else:
-        st.error("Falta la configuración 'GOOGLE_API_KEY' en los Secrets de Streamlit.")
-except Exception as e:
-    st.error(f"Error al conectar con la IA: {e}")
+        model = genai.GenerativeModel('gemini-1.5-flash')
+    except Exception as e:
+        st.error(f"Error al configurar la IA: {e}")
+else:
+    st.warning("⚠️ Configura la 'GOOGLE_API_KEY' en los Secrets de Streamlit.")
 
-    else:
-        st.error("Falta la configuración 'GOOGLE_API_KEY' en los Secrets de Streamlit.")
-except Exception as e:
-    st.error(f"Error al conectar con la IA: {e}")
-
-# Interfaz
+# 4. Interfaz de Usuario
 col1, col2 = st.columns(2)
 with col1:
-    idea = st.text_area("¿Cuál es la idea base?", placeholder="Ej: Consejos de marketing")
+    idea = st.text_area("¿Cuál es la idea base?", placeholder="Ej: 5 tips para vender más")
     red_social = st.selectbox("Red Social", ["Instagram", "LinkedIn", "Facebook", "TikTok"])
 with col2:
     angulo = st.selectbox("Ángulo", ["Disruptivo", "Dolor", "Solución", "Marketing", "Testimonio"])
     num_slides = st.slider("Número de Slides", 7, 10, 8)
 
-if st.button("Generar mi Carrusel"):
-    if idea:
-        with st.spinner('Creando contenido...'):
+# 5. Botón de Generar
+if st.button("Generar mi Carrusel Profesional"):
+    if not idea:
+        st.warning("Escribe una idea primero.")
+    elif model is None:
+        st.error("La IA no está lista. Revisa tus Secrets.")
+    else:
+        with st.spinner('Creando contenido estratégico...'):
             try:
-                prompt = f"Genera un carrusel de {num_slides} slides para {red_social} con ángulo {angulo}. Idea: {idea}. Incluye textos por slide y sugerencia de imagen."
+                prompt = f"Genera un carrusel de {num_slides} slides para {red_social} con ángulo {angulo}. Idea: {idea}. Para cada slide da: Título, Cuerpo de texto y búsqueda en Unsplash."
                 response = model.generate_content(prompt)
-                st.success("¡Listo!")
+                st.success("¡Tu carrusel está listo!")
                 st.write(response.text)
             except Exception as e:
-                st.error(f"Error al generar: {e}")
-    else:
-        st.warning("Escribe una idea primero.")
+                st.error(f"Error al generar contenido: {e}")
