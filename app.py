@@ -1,74 +1,56 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Configuración de Marca y Estética
+# Configuración Visual de Marca
 st.set_page_config(page_title="Generador de Carruseles Elite", layout="wide")
 
-st.markdown(f"""
+# Estética con tus colores (#8B6F47, #D4A574)
+st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com');
-    
-    .stApp {{ background-color: #FAF8F5; }}
-    h1 {{ font-family: 'Playfair Display', serif; color: #8B6F47; text-align: center; }}
-    p, label, .stSelectbox {{ font-family: 'Lato', sans-serif; color: #8B6F47; }}
-    
-    .stButton>button {{
+    .stApp { background-color: #FAF8F5; }
+    h1 { font-family: 'Playfair Display', serif; color: #8B6F47; text-align: center; }
+    p, label, .stSelectbox { font-family: 'Lato', sans-serif; color: #8B6F47; }
+    .stButton>button {
         background-color: #D4A574;
         color: white;
         border-radius: 30px;
-        border: none;
-        padding: 10px 30px;
-        font-family: 'Lato', sans-serif;
+        width: 100%;
         font-weight: bold;
-    }}
-    .slide-card {{
-        background-color: #F5E8E1;
-        padding: 25px;
-        border-radius: 15px;
-        border-left: 5px solid #E6AABC;
-        margin-bottom: 20px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
-    }}
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# Lógica de la App
-st.title("✨ Creador de Carruseles Pro")
-st.subheader("Transforma ideas simples en contenido de alto nivel")
+# Título de la App
+st.title("✨ Creador de Carruseles Mágico")
 
+# Conectar con tu API Key secreta (Invisible para el usuario)
+try:
+    api_key = st.secrets["GOOGLE_API_KEY"]
+    genai.configure(api_key=api_key)
+except:
+    st.error("Error de configuración: Asegúrate de añadir tu GOOGLE_API_KEY en los Secrets de Streamlit.")
+
+# Interfaz del usuario
 col1, col2 = st.columns(2)
-
 with col1:
-    idea = st.text_area("¿Cuál es la idea base de tu carrusel?", placeholder="Ej: 5 consejos para organizar tu oficina")
-    red_social = st.selectbox("Red Social", ["Instagram", "Facebook", "LinkedIn", "TikTok Series", "Pinterest"])
-    angulo = st.selectbox("Ángulo de Contenido", ["Disruptivo", "Dolor del cliente", "Solución al problema", "Mensaje de Marketing", "Testimonio"])
-
+    idea = st.text_area("¿Cuál es la idea base?", placeholder="Ej: Por qué tus cursos no funcionan")
+    red_social = st.selectbox("Red Social", ["Instagram", "LinkedIn", "Facebook", "TikTok"])
 with col2:
-    audiencia = st.text_input("¿A quién va dirigido?", placeholder="Ej: Mujeres emprendedoras")
+    angulo = st.selectbox("Ángulo", ["Disruptivo", "Dolor", "Solución", "Marketing", "Testimonio"])
     num_slides = st.slider("Número de Slides", 7, 10, 8)
-    api_key = st.text_input("Introduce tu API Key de Google (Solo para pruebas)", type="password")
 
-if st.button("Generar Carrusel Mágico"):
-    if not api_key or not idea:
-        st.error("Por favor, introduce tu API Key e idea.")
+if st.button("Generar mi Carrusel Profesional"):
+    if idea:
+        with st.spinner('Creando contenido estratégico...'):
+            try:
+                # Usamos el modelo más moderno y rápido de 2026
+                model = genai.GenerativeModel('gemini-1.5-flash')
+                prompt = f"Crea un carrusel de {num_slides} slides para {red_social} con ángulo {angulo}. Idea: {idea}. Incluye sugerencias de fotos de Unsplash por cada slide."
+                response = model.generate_content(prompt)
+                st.success("¡Listo! Aquí tienes tu contenido:")
+                st.write(response.text)
+            except Exception as e:
+                st.error(f"Error al generar: {e}")
     else:
-        try:
-            genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-pro')
-            
-            prompt = f"""
-            Actúa como estratega de contenido. Crea un carrusel de {num_slides} slides para {red_social}.
-            Idea: {idea}. Ángulo: {angulo}. Audiencia: {audiencia}.
-            Reglas: Slide 1 es el Gancho. Slide final es el CTA.
-            Para cada slide entrega: 
-            1. Título del Slide
-            2. Texto del cuerpo
-            3. Sugerencia de búsqueda en Unsplash (en inglés).
-            """
-            
-            response = model.generate_content(prompt)
-            st.success("¡Tu carrusel está listo!")
-            st.markdown(response.text)
-            
-        except Exception as e:
-            st.error(f"Hubo un error: {e}")
+        st.warning("Escribe una idea primero.")
