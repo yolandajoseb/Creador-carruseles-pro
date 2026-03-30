@@ -22,7 +22,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # 2. Título
-st.title("✨Creador de Carruseles Mágico Yolanda Concreta")
+st.title("✨ Creador de Carruseles Mágico")
 
 # 3. Conexión Segura con la IA
 model = None
