@@ -23,10 +23,18 @@ st.markdown("""
 st.title("✨ Creador de Carruseles Mágico")
 
 # Intentar conectar con la API
+# Conectar con tu API Key secreta (Solución definitiva v1)
 try:
     if "GOOGLE_API_KEY" in st.secrets:
-        genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Forzamos transporte REST para evitar errores de modelos no encontrados
+        genai.configure(api_key=st.secrets["GOOGLE_API_KEY"], transport='rest')
+        # Usamos la ruta completa del modelo estable
+        model = genai.GenerativeModel(model_name='models/gemini-1.5-flash')
+    else:
+        st.error("Falta la configuración 'GOOGLE_API_KEY' en los Secrets de Streamlit.")
+except Exception as e:
+    st.error(f"Error al conectar con la IA: {e}")
+
     else:
         st.error("Falta la configuración 'GOOGLE_API_KEY' en los Secrets de Streamlit.")
 except Exception as e:
